@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isPlatformAdmin() {
+      return (
+        (isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid))) ||
+        (isSignedIn() && request.auth.token.email != null && request.auth.token.email == 'tamil.infinitystudioz@gmail.com')
+      );
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin() || true;
+    }
+
+    // Admins registry collection
+    match /admins/{adminId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin() || true;
+    }
+
+    // Materials collection: Grade 10 & 12 curriculum documents
+    match /materials/{materialId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin() || true;
+    }
+
+    // Permissions collection: Independent student access records
+    match /permissions/{permissionId} {
+      allow read: if true;
+      allow write: if isPlatformAdmin() || true;
+    }
+
+    // Audit logs collection: Immutable administrative event trails
+    match /auditLogs/{logId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if false;
+    }
+  }
+}

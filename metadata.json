@@ -1,0 +1,6 @@
+{
+  "name": "darkDVM - Private Study Material Management Platform",
+  "description": "Secure private study material management and distribution platform for Grade 10 and Grade 12 students with role-based access control and watermarked viewer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,111 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account for student or administrator",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "username": { "type": "string", "maxLength": 50, "minLength": 3 },
+        "email": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["admin", "student"] },
+        "gradeAccess": { "type": "array" },
+        "accountStatus": { "type": "string", "enum": ["active", "disabled"] },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "createdBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["uid", "username", "role", "accountStatus"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Admin authorization entry",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "username": { "type": "string", "maxLength": 50 },
+        "email": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["uid", "username"]
+    },
+    "Material": {
+      "title": "Material",
+      "description": "Study material PDF record for Grade 10 or Grade 12",
+      "type": "object",
+      "properties": {
+        "materialId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200, "minLength": 2 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "grade": { "type": "string", "enum": ["GRADE_10", "GRADE_12"] },
+        "subject": { "type": "string", "maxLength": 100 },
+        "chapter": { "type": "string", "maxLength": 100 },
+        "storagePath": { "type": "string", "maxLength": 500 },
+        "fileDataUrl": { "type": "string" },
+        "fileSize": { "type": "string", "maxLength": 50 },
+        "pageCount": { "type": "number" },
+        "uploadedAt": { "type": "string", "maxLength": 64 },
+        "uploadedBy": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["published", "draft", "archived"] }
+      },
+      "required": ["materialId", "title", "grade", "subject", "status"]
+    },
+    "Permission": {
+      "title": "Permission",
+      "description": "Individual PDF access permission record per student",
+      "type": "object",
+      "properties": {
+        "permissionId": { "type": "string", "maxLength": 128 },
+        "uid": { "type": "string", "maxLength": 128 },
+        "username": { "type": "string", "maxLength": 50 },
+        "materialId": { "type": "string", "maxLength": 128 },
+        "materialTitle": { "type": "string", "maxLength": 200 },
+        "grade": { "type": "string", "enum": ["GRADE_10", "GRADE_12"] },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected", "revoked"] },
+        "approvedBy": { "type": "string", "maxLength": 128 },
+        "approvedAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 },
+        "lastAccessDate": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["permissionId", "uid", "materialId", "status"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Administrative actions audit log",
+      "type": "object",
+      "properties": {
+        "logId": { "type": "string", "maxLength": 128 },
+        "adminUid": { "type": "string", "maxLength": 128 },
+        "adminUsername": { "type": "string", "maxLength": 50 },
+        "action": { "type": "string", "maxLength": 100 },
+        "targetUid": { "type": "string", "maxLength": 128 },
+        "targetUsername": { "type": "string", "maxLength": 50 },
+        "materialId": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string", "maxLength": 64 },
+        "details": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["logId", "adminUid", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Student and admin profiles"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Authorized administrators collection for RBAC"
+    },
+    "/materials/{materialId}": {
+      "schema": "Material",
+      "description": "Grade 10 and Grade 12 educational study materials"
+    },
+    "/permissions/{permissionId}": {
+      "schema": "Permission",
+      "description": "Per-material individual student approval status"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Security audit trails for admin operations"
+    }
+  }
+}
